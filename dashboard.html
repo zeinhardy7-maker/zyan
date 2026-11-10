@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NMS RnB Network</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            noc: {
+              bg: '#040711',
+              card: 'rgba(13, 20, 36, 0.9)',
+              border: 'rgba(30, 41, 59, 0.8)',
+              cyan: '#00f0ff',
+              emerald: '#10b981',
+              amber: '#f59e0b',
+              rose: '#f43f5e',
+              purple: '#a855f7',
+              blue: '#3b82f6'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    .chip { flex-shrink: 0; padding: 0.55rem 0.9rem; border-radius: 9999px; font-size: 12px; font-weight: 700; border: 1px solid #1e293b; background: #0f172a; color: #cbd5e1; white-space: nowrap; }
+    .chip.on { background: #00f0ff; color: #000; border-color: #00f0ff; }
+    .chip span { font-family: "JetBrains Mono", monospace; opacity: .85; margin-left: 2px; }
+    .nav-btn { background: #0f172a; border-color: #1e293b; color: #cbd5e1; }
+    .nav-btn.on { background: rgba(0,240,255,.1); border-color: rgba(0,240,255,.4); color: #00f0ff; }
+    body {
+      background-color: #040711;
+      color: #f1f5f9;
+      background-image: 
+        radial-gradient(circle at 12% 12%, rgba(0, 240, 255, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 88% 88%, rgba(244, 63, 94, 0.05) 0%, transparent 45%);
+    }
+
+    .glass-card {
+      background: rgba(13, 20, 36, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    }
+
+    .glass-glow-cyan { border-color: rgba(0, 240, 255, 0.4); box-shadow: 0 0 20px -5px rgba(0, 240, 255, 0.2); }
+    .glass-glow-amber { border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 0 20px -5px rgba(245, 158, 11, 0.2); }
+    .glass-glow-rose { border-color: rgba(244, 63, 94, 0.5); box-shadow: 0 0 20px -5px rgba(244, 63, 94, 0.2); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #040711; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+    .pulse-glow-green { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); animation: pulseGreen 2s infinite; }
+    .pulse-glow-amber { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8); animation: pulseAmber 1.2s infinite; }
+    .pulse-glow-rose { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.9); animation: pulseRose 0.9s infinite; }
+
+    @keyframes pulseGreen { 70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); } }
+    @keyframes pulseAmber { 70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); } }
+    @keyframes pulseRose { 70% { box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); } }
+
+    html { -webkit-tap-highlight-color: transparent; }
+    body { overscroll-behavior-y: none; }
+    @media (max-width: 640px) { input, select { font-size: 16px !important; } }
+    .no-sb { scrollbar-width: none; } .no-sb::-webkit-scrollbar { display: none; }
+    .row-tap:active { background: rgba(30, 41, 59, 0.7); }
+
+    /* ========================================== */
+    /* ANIMASI KHUSUS KOTAK DAYA OPTIK RX         */
+    /* ========================================== */
+    .rx-box-idle { border-color: rgba(56, 189, 248, 0.8) !important; box-shadow: 0 0 15px rgba(56, 189, 248, 0.2) inset, 0 0 10px rgba(56, 189, 248, 0.4) !important; animation: pulseRxIdle 2s infinite; }
+    .rx-box-loading { border-color: rgba(245, 158, 11, 0.8) !important; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2) inset, 0 0 10px rgba(245, 158, 11, 0.4) !important; animation: pulseRxLoading 1.5s infinite; background-color: rgba(245, 158, 11, 0.05); }
+    .rx-box-scanning { border-color: rgba(0, 240, 255, 0.9) !important; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3) inset, 0 0 15px rgba(0, 240, 255, 0.5) !important; animation: pulseRxScanning 0.8s infinite; background-color: rgba(0, 240, 255, 0.1); }
+    .rx-box-done { border-color: rgba(168, 85, 247, 0.8) !important; background-color: rgba(168, 85, 247, 0.15); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2) inset !important; }
+
+    @keyframes pulseRxIdle { 0%, 100% { border-color: rgba(56, 189, 248, 0.8) !important; } 50% { border-color: rgba(56, 189, 248, 0.3) !important; box-shadow: none !important; } }
+    @keyframes pulseRxLoading { 0%, 100% { border-color: rgba(245, 158, 11, 0.8) !important; } 50% { border-color: rgba(245, 158, 11, 0.3) !important; box-shadow: none !important; } }
+    @keyframes pulseRxScanning { 0%, 100% { border-color: rgba(0, 240, 255, 0.9) !important; } 50% { border-color: rgba(0, 240, 255, 0.4) !important; transform: scale(1.02); } }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col overflow-x-hidden font-sans antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- HEADER MOBILE -->
+  <header class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-xl px-3" style="padding-top:env(safe-area-inset-top)">
+    <div class="flex items-center gap-2.5 h-14">
+      <button onclick="toggleMenu(true)" aria-label="Menu" class="w-10 h-10 shrink-0 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-center active:scale-95 transition"><i class="fa-solid fa-bars"></i></button>
+      <div class="min-w-0 flex-1">
+        <h1 class="text-sm font-extrabold text-white tracking-wide truncate">NMS RnB Network</h1>
+        <p class="text-[10px] text-emerald-400 font-mono flex items-center gap-1.5 truncate"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-glow-green shrink-0"></span>SNMP Trap UDP:162 Active</p>
+      </div>
+      <div class="text-right shrink-0">
+        <div id="digital-clock" class="text-[11px] font-bold font-mono text-cyan-400">00:00:00 WIB</div>
+        <div id="digital-date" class="text-[9px] text-slate-400">Loading...</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MENU SAMPING (DRAWER) -->
+  <div id="drawer-backdrop" onclick="toggleMenu(false)" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden"></div>
+  <aside id="drawer" class="fixed top-0 left-0 bottom-0 w-[86%] max-w-[340px] z-[60] bg-slate-950 border-r border-slate-800 -translate-x-full transition-transform duration-200 overflow-y-auto" style="padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)">
+    <div class="flex items-center gap-3 px-4 h-14 border-b border-slate-800">
+      <div class="p-2 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-cyan-400"><i class="fa-solid fa-tower-observation"></i></div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-extrabold text-white truncate">NMS RnB Network</div>
+        <div class="text-[10px] text-cyan-400 font-mono">Created; Iyann</div>
+      </div>
+      <button onclick="toggleMenu(false)" aria-label="Tutup" class="w-9 h-9 text-slate-400 flex items-center justify-center"><i class="fa-solid fa-xmark text-lg"></i></button>
+    </div>
+
+    <div class="p-4 space-y-5">
+      <section>
+        <div class="text-[11px] font-bold text-slate-500 mb-2">Ringkasan Jaringan</div>
+        <div class="grid grid-cols-2 gap-2">
+          <!-- CARD 1 -->
+          <div class="rounded-xl border border-blue-500/30 bg-blue-500/5 p-3">
+            <div class="text-[10px] font-bold text-slate-400">Total Pelanggan</div>
+            <div class="mt-1 flex items-baseline gap-1.5"><span id="metric-total" class="text-xl font-extrabold font-mono text-blue-400">0</span></div>
+            <div class="mt-1 text-[10px] text-slate-500 leading-tight">User PPPoE • MikroTik Sync</div>
+          </div>
+          <!-- CARD 2 -->
+          <div class="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3">
+            <div class="text-[10px] font-bold text-slate-400">Online Normal</div>
+            <div class="mt-1 flex items-baseline gap-1.5"><span id="metric-online" class="text-xl font-extrabold font-mono text-emerald-400">0</span><span id="metric-online-pct" class="text-[11px] text-emerald-500">0%</span></div>
+            <div class="mt-1 text-[10px] text-slate-500 leading-tight">Tautan Optik Stabil</div>
+          </div>
+          <!-- CARD 3 (LEBAR PENUH) -->
+          <div class="col-span-2 rounded-xl border border-rose-500/30 bg-rose-500/5 p-3">
+            <div class="text-[10px] font-bold text-slate-400">🚨 Offline / Lose Koneksi</div>
+            <div class="mt-1 flex items-baseline gap-1.5"><span id="metric-los" class="text-xl font-extrabold font-mono text-rose-400">0</span></div>
+            <div class="mt-1 text-[10px] text-slate-500 leading-tight">LOS / ODP Bermasalah / Adaptor Router Dicabut</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-1.5">
+        <div class="text-[11px] font-bold text-slate-500 mb-2">Menu</div>
+        <button id="tab-btn-list" onclick="switchTab('list')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-sm font-bold text-left"><i class="fa-solid fa-users w-5 text-center"></i><span class="flex-1">Daftar Pelanggan</span></button>
+        <button id="tab-btn-topology" onclick="switchTab('topology')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-sm font-bold text-left"><i class="fa-solid fa-sitemap w-5 text-center"></i><span class="flex-1">Topologi PON Port</span></button>
+        <button id="tab-btn-console" onclick="switchTab('console')" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-sm font-bold text-left"><i class="fa-solid fa-terminal w-5 text-center"></i><span class="flex-1">Live Trap Feed</span><span id="badge-trap-count" class="px-2 py-0.5 text-[10px] bg-slate-800 text-slate-300 rounded-full font-mono">0</span></button>
+      </section>
+
+      <section class="space-y-1.5">
+        <div class="text-[11px] font-bold text-slate-500 mb-2">Aksi</div>
+        <button disabled class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-sm font-bold text-left bg-slate-800/40 border-slate-700/50 text-slate-500 cursor-not-allowed opacity-60"><i class="fa-solid fa-rotate w-5 text-center"></i>Auto-Sync MikroTik (Locked)</button>
+        <button onclick="toggleMenu(false);openModal('telegram-modal')" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-sm font-bold text-left bg-sky-500/10 border-sky-500/30 text-sky-400"><i class="fa-brands fa-telegram w-5 text-center"></i>Telegram Bot</button>
+        <button onclick="toggleMenu(false);openModal('health-modal')" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl border text-sm font-bold text-left bg-purple-500/10 border-purple-500/30 text-purple-400"><i class="fa-solid fa-heart-pulse w-5 text-center"></i>System Health</button>
+      </section>
+
+      <p class="text-[10px] text-slate-500 font-mono leading-relaxed"><i class="fa-solid fa-server"></i> Cluster: Panglejar • Perum • Cibarola • Sukamelang</p>
+    </div>
+  </aside>
+
+  <!-- KONTEN UTAMA -->
+  <main class="flex-1 w-full max-w-3xl mx-auto px-3 pt-3 pb-6 space-y-3">
+
+    <!-- VIEW 1: DAFTAR PELANGGAN -->
+    <div id="view-list" class="space-y-3">
+      <div class="flex gap-2">
+        <div class="relative flex-1 min-w-0">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+          <input type="search" id="search-input" oninput="renderTable()" placeholder="Cari nama / MAC / IP" class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 h-11 text-slate-200 focus:outline-none focus:border-cyan-400 transition">
+        </div>
+        <select id="node-filter-select" onchange="renderTable()" class="w-[38%] shrink-0 bg-slate-900 border border-slate-800 rounded-xl px-2 h-11 text-cyan-400 focus:outline-none focus:border-cyan-400">
+          <option value="ALL">Semua Node</option>
+          <option value="Panglejar">Panglejar</option>
+          <option value="Perum">Perum</option>
+          <option value="Cibarola">Cibarola</option>
+          <option value="Sukamelang">Sukamelang</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2 overflow-x-auto no-sb -mx-3 px-3">
+        <button onclick="setFilter('ALL')" id="flt-all" class="chip">Semua <span id="cnt-all">0</span></button>
+        <button onclick="setFilter('ONLINE')" id="flt-online" class="chip">Online <span id="cnt-online">0</span></button>
+        <button onclick="setFilter('LOS')" id="flt-los" class="chip">Offline/LOS <span id="cnt-los">0</span></button>
+        <button onclick="resetPonFilter()" id="flt-pon-reset" class="chip hidden !bg-rose-500/15 !text-rose-400 !border-rose-500/40"><i class="fa-solid fa-filter-circle-xmark mr-1"></i>Reset PON</button>
+      </div>
+
+      <div class="flex items-center justify-between px-1 text-[11px] text-slate-500 font-mono">
+        <span id="label-pon-filter">Live Sync Active</span>
+        <span id="list-count">0 pelanggan</span>
+      </div>
+
+      <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="flex items-center justify-between px-3.5 py-2 border-b border-slate-800 text-[10px] text-slate-500 font-bold">
+          <span>Pelanggan • Server Node</span><span>Info & Aksi</span>
+        </div>
+        <div id="customer-list" class="divide-y divide-slate-800/60"></div>
+        <button id="btn-more" onclick="showMore()" class="hidden w-full py-3.5 text-xs font-bold text-cyan-400 border-t border-slate-800 active:bg-slate-800/60">Muat lebih banyak</button>
+      </div>
+    </div>
+
+    <!-- VIEW 2: LIVE SNMP TRAP STREAM -->
+    <div id="view-console" class="hidden space-y-4">
+      <div class="glass-card rounded-2xl p-3 font-mono text-xs">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3.5 mb-3">
+          <div class="flex items-center gap-3">
+            <div class="flex gap-1.5">
+              <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+            </div>
+            <span class="text-slate-400 font-bold tracking-wider text-[11px] uppercase">snmptrapd.log • Live Feed</span>
+          </div>
+          <button onclick="clearConsoleLog()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[11px] font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-trash-can"></i> Bersihkan Log
+          </button>
+        </div>
+
+        <div id="console-stream" class="h-[62vh] overflow-y-auto space-y-2 pr-1">
+          <div class="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-slate-500 text-[11px]">
+            [SYSTEM] Listener SNMP Trap UDP Port 162 aktif. Standby mendengarkan OLT HSAirpo & Hioso...
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL 1: ONU FULL TELEMETRY DIAGNOSTICS -->
+  <div id="diag-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center sm:p-4">
+    <div class="glass-card rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 space-y-4 max-h-[92vh] overflow-y-auto shadow-2xl relative border-slate-700">
+      <button onclick="closeModal('diag-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+        <div class="p-3 bg-cyan-500/10 text-cyan-400 rounded-xl">
+          <i class="fa-solid fa-microchip text-2xl"></i>
+        </div>
+        <div>
+          <h3 id="diag-name" class="text-lg font-bold text-white">Detail Diagnostik Pelanggan</h3>
+          <p id="diag-server" class="text-xs font-mono text-cyan-400">Server Node: -</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs font-mono">
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <span class="text-slate-500 block text-[10px]">MAC ADDRESS</span>
+          <span id="diag-mac" class="font-bold text-slate-200 break-all">00:00:00:00:00:00</span>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <span class="text-slate-500 block text-[10px]">IP ADDRESS</span>
+          <span id="diag-ip" class="font-bold text-slate-200">192.168.0.1</span>
+        </div>
+        
+        <!-- ========================================== -->
+        <!-- KOTAK ANIMASI DAYA OPTIK RX                -->
+        <!-- ========================================== -->
+        <div id="box-rx" class="bg-slate-950 p-3 rounded-xl border border-slate-800 transition-all duration-300">
+          <span class="text-slate-500 block text-[10px]">DAYA OPTIK RX</span>
+          <span id="diag-rx" class="font-bold text-purple-300 mt-1 block">-19.50 dBm</span>
+        </div>
+        
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <span class="text-slate-500 block text-[10px]">STATUS TAUTAN</span>
+          <span id="diag-status" class="font-bold text-emerald-400">ONLINE</span>
+        </div>
+      </div>
+
+      <div id="diag-trap-box" class="p-3.5 rounded-xl border bg-slate-950 text-xs space-y-1 font-mono">
+        <!-- Dynamic content -->
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-800 gap-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          
+          <!-- Button Cek Redaman -->
+          <button id="btn-cek-redaman" onclick="eksekusiCekRedaman()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 hidden">
+            <i class="fa-solid fa-satellite-dish"></i> Cek Redaman
+          </button>
+
+          <!-- Button Buka Isolir -->
+          <button id="btn-buka-isolir" onclick="eksekusiBukaIsolir()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-lock-open"></i> Buka Isolir
+          </button>
+
+          <!-- Button Reboot ONT -->
+          <button id="btn-reboot-ont" onclick="eksekusiRebootOnt()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-power-off"></i> Reboot ONT
+          </button>
+          
+          <!-- BUTTON REMOTE PELANGGAN -->
+          <button id="btn-remote" onclick="eksekusiRemote()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+            <i class="fa-solid fa-globe"></i> Remote
+          </button>
+        </div>
+
+        <button onclick="closeModal('diag-modal')" class="px-4 py-2 bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-xl font-bold text-xs transition">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: SYSTEM HEALTH DIAGNOSTICS -->
+  <div id="health-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center sm:p-4">
+    <div class="glass-card rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 space-y-4 max-h-[92vh] overflow-y-auto shadow-2xl relative border-slate-700">
+      <button onclick="closeModal('health-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+        <div class="p-3 bg-purple-500/10 text-purple-400 rounded-xl">
+          <i class="fa-solid fa-heart-pulse text-2xl"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Status Kesehatan NMS Server</h3>
+          <p class="text-xs text-slate-400">Node.js Engine & Port Listener</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs font-mono">
+        <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="text-slate-400">SNMP Trap UDP Port 162:</span>
+          <span class="text-emerald-400 font-bold">LISTENING (ACTIVE)</span>
+        </div>
+        <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="text-slate-400">Web Engine HTTP Port 8080:</span>
+          <span class="text-emerald-400 font-bold">ONLINE</span>
+        </div>
+        <div class="flex items-center justify-between p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="text-slate-400">Koneksi Socket.io Realtime:</span>
+          <span class="text-cyan-400 font-bold">CONNECTED</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end pt-2 border-t border-slate-800">
+        <button onclick="closeModal('health-modal')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: TELEGRAM BOT SETTINGS -->
+  <div id="telegram-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center sm:p-4">
+    <div class="glass-card rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 space-y-4 max-h-[92vh] overflow-y-auto shadow-2xl relative border-slate-700">
+      <button onclick="closeModal('telegram-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+        <div class="p-3 bg-sky-500/10 text-sky-400 rounded-xl">
+          <i class="fa-brands fa-telegram text-2xl"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Notifikasi Telegram Bot</h3>
+          <p class="text-xs text-slate-400">Kirim alert Dying Gasp & LOS ke HP Admin</p>
+        </div>
+      </div>
+
+      <div class="space-y-3 text-xs font-mono">
+        <div>
+          <label class="block text-slate-300 font-bold mb-1">Bot Token Telegram</label>
+          <input type="text" id="tg-token" placeholder="7123456789:AAFx_TokenKey" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500">
+        </div>
+        <div>
+          <label class="block text-slate-300 font-bold mb-1">Chat ID Group NOC</label>
+          <input type="text" id="tg-chatid" placeholder="-100123456789" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none focus:border-sky-500">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button onclick="closeModal('telegram-modal')" class="px-4 py-2 bg-sky-500 text-black font-extrabold rounded-xl text-xs">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: OLT & PON EXPLORER -->
+  <div id="pon-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center sm:p-4">
+    <div class="glass-card rounded-t-3xl sm:rounded-2xl max-w-lg w-full p-5 space-y-4 max-h-[92vh] overflow-y-auto shadow-2xl relative border-slate-700">
+      <button onclick="closeModal('pon-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
+        <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
+          <i class="fa-solid fa-network-wired text-2xl"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white" id="pon-modal-title">Daftar OLT</h3>
+          <p class="text-xs text-slate-400" id="pon-modal-subtitle">Memuat data...</p>
+        </div>
+      </div>
+
+      <!-- Kontainer dinamis untuk OLT & PON -->
+      <div id="pon-container" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2"></div>
+
+      <div class="flex items-center justify-end pt-2 border-t border-slate-800">
+        <button onclick="closeModal('pon-modal')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold transition hover:bg-slate-700">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-4 left-3 right-3 mx-auto z-[70] space-y-2 max-w-sm pointer-events-none"></div>
+
+  <!-- ========================================== -->
+  <!-- AUDIO & MODAL ALARM MASSAL (JALUR PUTUS)   -->
+  <!-- ========================================== -->
+  <audio id="alarm-audio" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto" loop></audio>
+
+  <div id="alarm-modal" class="fixed inset-0 bg-rose-950/95 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 transition-all">
+    <div class="bg-rose-900 border-4 border-rose-500 rounded-3xl max-w-sm w-full p-6 text-center shadow-[0_0_80px_rgba(244,63,94,0.8)] animate-pulse">
+        <i class="fa-solid fa-triangle-exclamation text-7xl text-white mb-4 fa-beat"></i>
+        <h2 class="text-3xl font-black text-white mb-2">CRITICAL ALARM!</h2>
+        <p class="text-rose-200 text-sm mb-4">Terdeteksi <span id="alarm-count" class="font-black text-white text-xl bg-rose-950 px-2 py-1 rounded">0</span> pelanggan OFFLINE beruntun dari:</p>
+        
+        <div id="alarm-node" class="text-xl sm:text-2xl font-extrabold text-white mb-6 bg-rose-950/50 py-3 px-2 rounded-xl border border-rose-500/50 leading-relaxed">OLT TARGET</div>
+        
+        <p class="text-[11px] text-rose-300 mb-6 font-mono bg-rose-950/30 p-2 rounded-lg">
+           Indikasi FO Jalur Utama Putus (LOS) atau Mati Lampu Massal pada OLT.
+        </p>
+        
+        <button onclick="stopAlarm()" class="w-full py-3.5 bg-white hover:bg-slate-200 text-rose-900 font-extrabold rounded-xl shadow-xl active:scale-95 transition text-lg">
+            MATIKAN ALARM
+        </button>
+    </div>
+  </div>
+
+  <!-- SOCKET.IO & APPLICATION SCRIPT -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    let customers = [];
+    let currentFilter = 'ALL';
+    let trapLogsCount = 0;
+    let currentPonMacs = null; 
+
+    // Variable global penampung context diagnostik aktif
+    let currentDiagUser = '';
+    let currentDiagNode = '';
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('digital-clock').innerText = now.toLocaleTimeString('id-ID') + ' WIB';
+      document.getElementById('digital-date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // AUTO-SYNC PELANGGAN DARI MIKROTIK
+    async function loadCustomersFromMikrotik() {
+      try {
+        const res = await fetch('/api/customers');
+        const data = await res.json();
+        if (data.success && data.customers) {
+          customers = data.customers.map(c => ({
+            ...c,
+            rx: c.rx || '-'
+          }));
+          renderTable(true);
+          renderTopologyGrid();
+        }
+      } catch (err) {
+        console.error("Gagal sync data dari MikroTik:", err);
+      }
+    }
+
+    const PAGE = 50;
+    let shown = PAGE;
+    let viewList = [];
+
+    // FUNGSI RENDER TABEL (MENDUKUNG TOMBOL "CEK DETAIL >")
+    function renderTable(keep) {
+      if (!keep) shown = PAGE;
+      renderMetrics();
+      const box = document.getElementById('customer-list');
+      const search = document.getElementById('search-input').value.toLowerCase().trim();
+      const nodeSel = document.getElementById('node-filter-select').value;
+
+      viewList = customers.filter(c => {
+        if (nodeSel !== 'ALL' && !c.node.toLowerCase().includes(nodeSel.toLowerCase())) return false;
+        if (currentFilter === 'ONLINE' && c.status !== 'ONLINE') return false;
+        if (currentFilter === 'LOS' && c.status === 'ONLINE') return false; // Tab Offline tampilkan semua yang bukan Online
+        if (currentPonMacs !== null) {
+          const m = c.mac.replace(/[:-]/g, '').toLowerCase();
+          if (!currentPonMacs.some(x => x.replace(/[:-]/g, '').toLowerCase() === m)) return false;
+        }
+        if (search && !(c.name.toLowerCase().includes(search) || c.node.toLowerCase().includes(search) || c.ip.includes(search) || c.mac.toLowerCase().includes(search))) return false;
+        return true;
+      });
+
+      document.getElementById('list-count').innerText = `${viewList.length} pelanggan`;
+      document.getElementById('btn-more').classList.toggle('hidden', viewList.length <= shown);
+
+      if (viewList.length === 0) {
+        box.innerHTML = '<div class="px-4 py-10 text-center text-xs text-slate-500">Tidak ada pelanggan yang sesuai filter</div>';
+        return;
+      }
+
+      box.innerHTML = viewList.slice(0, shown).map((c, i) => {
+        const online = c.status === 'ONLINE';
+        const dot = online ? 'bg-emerald-500' : 'bg-rose-500';
+        const rxNum = parseFloat(c.rx);
+        const rxCls = !online ? 'text-slate-600' : (rxNum < -25 ? 'text-orange-400' : 'text-purple-300');
+        const name = String(c.name).replace(/</g, '&lt;');
+        
+        // Format teks redaman
+        const redamanText = (online && c.rx && c.rx !== '-' && c.rx !== 'Tdk Ditemukan') ? `${c.rx} dBm` : '';
+
+        return `<button onclick="openDiagByIdx(${i})" class="row-tap w-full text-left flex items-center gap-3 px-3.5 py-3 hover:bg-slate-800/50 transition border-b border-transparent hover:border-slate-800">
+          <span class="w-2.5 h-2.5 rounded-full shrink-0 ${dot}"></span>
+          <span class="min-w-0 flex-1">
+            <span class="block text-[13px] font-bold text-slate-100 truncate">${name}</span>
+            <span class="block text-[11px] text-cyan-400 font-mono truncate">${c.node}</span>
+          </span>
+          <span class="text-right shrink-0 flex flex-col items-end justify-center">
+            <span class="block text-[12px] font-bold ${rxCls} font-mono mb-1">${redamanText}</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 text-cyan-400 border border-slate-700 rounded-md text-[9px] font-bold tracking-wide">
+              CEK DETAIL <i class="fa-solid fa-chevron-right text-[8px]"></i>
+            </span>
+          </span>
+        </button>`;
+      }).join('');
+    }
+
+    function showMore() { shown += PAGE; renderTable(true); }
+
+    function openDiagByIdx(i) {
+      const c = viewList[i];
+      if (c) openDiagnostics(c.name, c.node, c.mac, c.ip, c.rx, c.status);
+    }
+
+    function toggleMenu(open) {
+      document.getElementById('drawer').classList.toggle('-translate-x-full', !open);
+      document.getElementById('drawer-backdrop').classList.toggle('hidden', !open);
+      document.body.classList.toggle('overflow-hidden', open);
+    }
+
+    function renderMetrics() {
+      const total = customers.length;
+      const online = customers.filter(c => c.status === 'ONLINE').length;
+      const los = customers.filter(c => c.status !== 'ONLINE').length; 
+      const onlinePct = total > 0 ? ((online / total) * 100).toFixed(0) : 0;
+
+      document.getElementById('metric-total').innerText = total;
+      document.getElementById('metric-online').innerText = online;
+      document.getElementById('metric-online-pct').innerText = `${onlinePct}%`;
+      document.getElementById('metric-los').innerText = los;
+
+      document.getElementById('cnt-all').innerText = total;
+      document.getElementById('cnt-online').innerText = online;
+      document.getElementById('cnt-los').innerText = los;
+    }
+
+    function renderTopologyGrid() {
+      const container = document.getElementById('topology-grid-container');
+      container.innerHTML = '';
+
+      const nodes = [...new Set(customers.map(c => c.node))];
+      nodes.forEach(nodeName => {
+        const list = customers.filter(c => c.node === nodeName);
+        const div = document.createElement('div');
+        div.className = "glass-card p-4 rounded-2xl space-y-2";
+        
+        let itemsHtml = '';
+        list.slice(0, 5).forEach(c => {
+          let dot = c.status === 'ONLINE' ? 'bg-emerald-500' : 'bg-rose-500';
+          itemsHtml += `<div class="flex items-center justify-between py-1 border-b border-slate-800/50 text-xs font-mono">
+            <span class="text-slate-200 font-bold">${c.name}</span>
+            <span class="w-2.5 h-2.5 rounded-full ${dot}"></span>
+          </div>`;
+        });
+
+        div.innerHTML = `
+          <div class="font-bold text-cyan-400 mb-2 border-b border-slate-800 pb-2 flex items-center justify-between font-mono cursor-pointer hover:text-cyan-300 transition group" onclick="bukaPonModal('${nodeName}')">
+            <span><i class="fa-solid fa-server mr-1"></i> ${nodeName} <i class="fa-solid fa-up-right-from-square text-[10px] ml-1 text-slate-500 group-hover:text-cyan-400"></i></span>
+            <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-300">${list.length} User</span>
+          </div>
+          ${itemsHtml}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function setFilter(flt) {
+      currentFilter = flt;
+      const ids = { ALL: 'all', ONLINE: 'online', LOS: 'los' };
+      Object.values(ids).forEach(id => document.getElementById(`flt-${id}`).classList.remove('on'));
+      document.getElementById(`flt-${ids[flt]}`).classList.add('on');
+      renderTable();
+    }
+
+    function resetPonFilter() {
+      currentPonMacs = null;
+      document.getElementById('flt-pon-reset').classList.add('hidden');
+      document.getElementById('node-filter-select').value = 'ALL';
+      document.getElementById('label-pon-filter').innerText = "Live Sync Active";
+      showToast('FILTER DIHAPUS', 'Menampilkan semua pelanggan di tabel.', 'cyan');
+      renderTable();
+    }
+
+    async function openDiagnostics(name, node, mac, ip, rx, status) {
+        currentDiagUser = name;
+        currentDiagNode = node;
+
+        // Setel tampilan awal saat loading
+        document.getElementById('diag-name').innerText = name;
+        document.getElementById('diag-server').innerText = `Server Node: ${node}`;
+        document.getElementById('diag-mac').innerText = mac;
+        document.getElementById('diag-ip').innerText = ip;
+
+        const diagStatus = document.getElementById('diag-status');
+        const trapBox = document.getElementById('diag-trap-box');
+        
+        // Reset animasi kotak RX
+        const boxRx = document.getElementById('box-rx');
+        boxRx.className = 'bg-slate-950 p-3 rounded-xl border border-slate-800 transition-all duration-300'; 
+
+        if (status === 'ONLINE') {
+            diagStatus.innerText = 'ONLINE (NORMAL)';
+            diagStatus.className = 'font-bold text-emerald-400';
+            trapBox.className = 'p-3.5 rounded-xl border bg-emerald-950/20 border-emerald-800/40 text-xs space-y-1 text-emerald-300 font-mono';
+            trapBox.innerHTML = `<div><i class="fa-solid fa-circle-check"></i> Sinyal & Daya Listrik Normal</div><p class="text-[11px] text-emerald-400/80">ONT terhubung sempurna dengan OLT.</p>`;
+        } else {
+            diagStatus.innerText = '🚨 LOSE KONEKSI / OFFLINE';
+            diagStatus.className = 'font-bold text-rose-400';
+            trapBox.className = 'p-3.5 rounded-xl border bg-rose-950/20 border-rose-800/40 text-xs space-y-1 text-rose-300 font-mono';
+            trapBox.innerHTML = `<div><i class="fa-solid fa-scissors"></i> Terdeteksi Loss of Signal (LOS) / Offline</div><p class="text-[11px] text-rose-400/80">Kabel Drop Core terputus atau Adaptor Router dicabut.</p>`;
+        }
+
+        openModal('diag-modal');
+
+        // LOGIKA BARU: Manual Eksekusi Cek Redaman & Animasi
+        if (status === 'ONLINE') {
+            // Berikan animasi Glow Cyan berkedip lambat (IDLE)
+            boxRx.classList.add('rx-box-idle');
+            document.getElementById('diag-rx').innerHTML = '<span class="text-sky-400 text-[11px] font-bold flex items-center gap-1.5 mt-1"><i class="fa-solid fa-hand-point-down fa-bounce text-sm"></i> KLIK CEK REDAMAN</span>';
+            
+            const btnCek = document.getElementById('btn-cek-redaman');
+            if(btnCek) {
+                btnCek.classList.remove('hidden');
+                btnCek.disabled = false;
+                btnCek.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Cek Redaman';
+            }
+        } else {
+             document.getElementById('diag-rx').innerHTML = '<span class="text-rose-400 font-bold mt-1 block">OFFLINE</span>';
+             const btnCek = document.getElementById('btn-cek-redaman');
+             if(btnCek) btnCek.classList.add('hidden'); 
+        }
+    }
+
+    // === FUNGSI EKSEKUSI MANUAL CEK REDAMAN DENGAN QUEUE & NOTIF ===
+    async function eksekusiCekRedaman() {
+        if (!currentDiagUser || !currentDiagNode) return;
+
+        const btn = document.getElementById('btn-cek-redaman');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menghubungkan...';
+        
+        // Ubah animasi kotak jadi Amber (LOADING)
+        const boxRx = document.getElementById('box-rx');
+        boxRx.classList.remove('rx-box-idle');
+        boxRx.classList.add('rx-box-loading');
+        document.getElementById('diag-rx').innerHTML = '<span class="text-amber-400 text-[11px] font-bold flex items-center gap-1.5 mt-1"><i class="fa-solid fa-satellite-dish fa-fade text-sm"></i> MENGHUBUNGKAN...</span>';
+
+        try {
+            let serverKey = currentDiagNode;
+            const resServer = await fetch(`/api/server-olt/${encodeURIComponent(currentDiagNode)}`);
+            const dataServer = await resServer.json();
+            if (dataServer.success) serverKey = dataServer.serverKey;
+
+            // Tembak API
+            const res = await fetch('/api/cek-redaman', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ serverKey, username: currentDiagUser })
+            });
+            const data = await res.json();
+            
+            // Masuk Polling Antrean
+            if (data.queueId) {
+                pollCekRedamanResultQueue(data.queueId);
+            }
+        } catch (err) {
+            boxRx.classList.remove('rx-box-loading');
+            document.getElementById('diag-rx').innerHTML = '<span class="text-rose-400 mt-1 block">Gagal Server</span>';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Cek Redaman';
+        }
+    }
+
+    function pollCekRedamanResultQueue(queueId) {
+        let hasNotifiedProcessing = false;
+        let lastPosition = 0;
+        const boxRx = document.getElementById('box-rx');
+        
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch(`/api/queue-result/${queueId}`);
+                const data = await res.json();
+                
+                // STATUS 1: MENGANTRE (Tetap Amber Loading)
+                if (data.status === 'pending') {
+                    if (lastPosition !== data.position) {
+                        showToast('MENGANTRE', `Anda berada di antrian ke-${data.position}. Mohon tunggu.`, 'amber');
+                        lastPosition = data.position;
+                    }
+                    document.getElementById('diag-rx').innerHTML = `<span class="text-amber-400 text-[11px] font-bold flex items-center gap-1.5 mt-1"><i class="fa-solid fa-hourglass-half fa-spin text-sm"></i> ANTRIAN KE-${data.position}</span>`;
+                    document.getElementById('btn-cek-redaman').innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Antri (${data.position})...`;
+                } 
+                // STATUS 2: GILIRAN TIBA / SEDANG SCAN (Animasi Turbo Cyan)
+                else if (data.status === 'processing') {
+                    if (!hasNotifiedProcessing) {
+                        showToast('ANTRIAN SELESAI', 'Otomatis memindai redaman ke OLT!', 'cyan');
+                        hasNotifiedProcessing = true;
+                        
+                        boxRx.classList.remove('rx-box-loading');
+                        boxRx.classList.add('rx-box-scanning');
+                        
+                        document.getElementById('diag-rx').innerHTML = '<span class="text-cyan-400 text-[11px] font-bold flex items-center gap-1.5 mt-1"><i class="fa-solid fa-satellite-dish fa-beat text-sm"></i> MEMINDAI OLT...</span>';
+                        document.getElementById('btn-cek-redaman').innerHTML = '<i class="fa-solid fa-satellite-dish fa-beat"></i> Memindai...';
+                    }
+                } 
+                // STATUS 3: SELESAI (Warna Ungu Finish)
+                else if (data.status === 'done') {
+                    clearInterval(interval);
+                    let redamanText = "Tdk Ditemukan";
+                    if(data.data && data.data.olt && data.data.olt.includes("Redaman:")) {
+                        const match = data.data.olt.match(/Redaman:\s*\*([-\d.]+\s*dBm)\*/);
+                        if(match && match[1]) redamanText = match[1];
+                    }
+                    
+                    boxRx.classList.remove('rx-box-loading', 'rx-box-scanning');
+                    boxRx.classList.add('rx-box-done');
+                    document.getElementById('diag-rx').innerHTML = `<span class="text-purple-300 font-bold text-sm mt-1 block">${redamanText}</span>`;
+                    
+                    const btnCek = document.getElementById('btn-cek-redaman');
+                    btnCek.disabled = false;
+                    btnCek.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Cek Redaman';
+                } 
+                // STATUS 4: ERROR
+                else if (data.status === 'error') {
+                    clearInterval(interval);
+                    boxRx.classList.remove('rx-box-loading', 'rx-box-scanning');
+                    document.getElementById('diag-rx').innerHTML = '<span class="text-rose-400 font-bold mt-1 block">Error OLT</span>';
+                    
+                    const btnCek = document.getElementById('btn-cek-redaman');
+                    btnCek.disabled = false;
+                    btnCek.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Cek Redaman';
+                }
+            } catch (e) {
+                clearInterval(interval);
+            }
+        }, 2000);
+    }
+
+    // === FUNGSI REMOTE IP PELANGGAN ===
+    function eksekusiRemote() {
+        const ip = document.getElementById('diag-ip').innerText;
+        if (!ip || ip === 'Dynamic' || ip === '-' || ip.includes('Error') || ip === '192.168.0.1') {
+            showToast('GAGAL REMOTE', 'IP Address belum terdeteksi atau masih Dynamic', 'rose');
+            return;
+        }
+        window.open(`http://${ip}`, '_blank');
+        showToast('MEMBUKA TAB BARU', `Menghubungkan ke http://${ip}`, 'cyan');
+    }
+
+    // Eksekusi Buka Isolir Menggantikan Test Ping
+    async function eksekusiBukaIsolir() {
+      if (!currentDiagUser || !currentDiagNode) {
+        showToast('ERROR', 'Data pelanggan tidak ditemukan', 'rose');
+        return;
+      }
+
+      const btn = document.getElementById('btn-buka-isolir');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Eksekusi...';
+
+      try {
+        let serverKey = currentDiagNode;
+        const resServer = await fetch(`/api/server-olt/${encodeURIComponent(currentDiagNode)}`);
+        const dataServer = await resServer.json();
+        if (dataServer.success) {
+          serverKey = dataServer.serverKey;
+        }
+
+        const res = await fetch('/api/aktivasi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serverKey, username: currentDiagUser })
+        });
+
+        const data = await res.json();
+        
+        if (data.queueId) {
+          pollAktivasiResult(data.queueId);
+        } else if (data.success) {
+          showToast('BERHASIL', `Aktivasi/Buka Isolir untuk ${currentDiagUser} Berhasil!`, 'emerald');
+          closeModal('diag-modal');
+          loadCustomersFromMikrotik();
+        } else {
+          showToast('GAGAL', data.error || 'Proses aktivasi gagal', 'rose');
+        }
+      } catch (err) {
+        showToast('ERROR', 'Gagal terhubung ke API Aktivasi Server', 'rose');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Buka Isolir';
+      }
+    }
+
+    function pollAktivasiResult(queueId) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/queue-result/${queueId}`);
+          const data = await res.json();
+          if (data.status === 'done') {
+            clearInterval(interval);
+            showToast('BERHASIL', `Aktivasi/Buka Isolir untuk ${currentDiagUser} Berhasil!`, 'emerald');
+            closeModal('diag-modal');
+            loadCustomersFromMikrotik();
+          } else if (data.status === 'error') {
+            clearInterval(interval);
+            showToast('GAGAL', data.error || 'Terjadi kesalahan sistem', 'rose');
+          }
+        } catch (e) {
+          clearInterval(interval);
+        }
+      }, 2000);
+    }
+
+    // Eksekusi Reboot ONT / Reset Session PPPoE
+    async function eksekusiRebootOnt() {
+      if (!currentDiagUser || !currentDiagNode) {
+        showToast('ERROR', 'Data pelanggan tidak ditemukan', 'rose');
+        return;
+      }
+
+      if (!confirm(`Yakin ingin me-restart koneksi ONT / PPPoE milik ${currentDiagUser}?`)) {
+        return;
+      }
+
+      const btn = document.getElementById('btn-reboot-ont');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+
+      try {
+        let serverKey = currentDiagNode;
+        const resServer = await fetch(`/api/server-olt/${encodeURIComponent(currentDiagNode)}`);
+        const dataServer = await resServer.json();
+        if (dataServer.success) {
+          serverKey = dataServer.serverKey;
+        }
+
+        const mac = document.getElementById('diag-mac').innerText;
+
+        const res = await fetch('/api/reboot-ont', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ serverKey, username: currentDiagUser, mac })
+        });
+
+        const data = await res.json();
+        
+        if (data.queueId) {
+          pollRebootResult(data.queueId);
+        } else if (data.success) {
+          showToast('BERHASIL', `Restart koneksi ${currentDiagUser} Berhasil!`, 'emerald');
+          closeModal('diag-modal');
+          loadCustomersFromMikrotik();
+        } else {
+          showToast('GAGAL', data.error || 'Proses restart gagal', 'rose');
+        }
+      } catch (err) {
+        showToast('ERROR', 'Gagal terhubung ke API Reboot Server', 'rose');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-power-off"></i> Reboot ONT';
+      }
+    }
+
+    function pollRebootResult(queueId) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/queue-result/${queueId}`);
+          const data = await res.json();
+          if (data.status === 'done') {
+            clearInterval(interval);
+            showToast('BERHASIL', `Restart koneksi ${currentDiagUser} Berhasil!`, 'emerald');
+            closeModal('diag-modal');
+            loadCustomersFromMikrotik();
+          } else if (data.status === 'error') {
+            clearInterval(interval);
+            showToast('GAGAL', data.error || 'Terjadi kesalahan sistem', 'rose');
+          }
+        } catch (e) {
+          clearInterval(interval);
+        }
+      }, 2000);
+    }
+
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ==========================================
+    // SISTEM DETEKSI ALARM PUTUS JALUR (SNMP TRAP BURST)
+    // ==========================================
+    let trapCounters = {};
+    const socket = io();
+    
+    socket.on('connect', () => {
+      addConsoleLog('INFO', 'Terhubung ke NMS Backend Engine UDP:162');
+    });
+
+    socket.on('nms_olt_event', (data) => {
+      addConsoleLog(data.type, `${data.oltName} -> ${data.message}`);
+      
+      // 1. Update status dot merah/kuning di tabel web
+      let match = customers.find(c => c.mac.toLowerCase() === data.macAddress?.toLowerCase());
+      if (match) {
+        match.status = data.type;
+        renderTable(true);
+      }
+
+      // 2. LOGIKA ALARM MASSAL PER OLT SPESIFIK
+      if (data.type === 'LOS' || data.type === 'DYING_GASP') {
+          let key = data.oltName + '_' + data.type; 
+          
+          if (!trapCounters[key]) {
+              trapCounters[key] = { count: 0, timer: null };
+          }
+          
+          trapCounters[key].count++; 
+          
+          // TRESHOLD: Jika tembus minimal 8 pelanggan dari OLT ini
+          if (trapCounters[key].count >= 8) {
+              triggerMassOutageAlarm(data.oltName, trapCounters[key].count, data.type);
+              trapCounters[key].count = 0; 
+          }
+
+          // WINDOW TIMER: Reset hitungan setelah 15 detik
+          clearTimeout(trapCounters[key].timer);
+          trapCounters[key].timer = setTimeout(() => {
+              if (trapCounters[key]) trapCounters[key].count = 0;
+          }, 15000);
+      }
+    });
+
+    function triggerMassOutageAlarm(oltName, count, type) {
+        let alasan = type === 'DYING_GASP' ? 'MATI LISTRIK (DYING GASP)' : 'KABEL PUTUS (LOS)';
+        
+        document.getElementById('alarm-count').innerText = count;
+        document.getElementById('alarm-node').innerText = `${oltName.toUpperCase()}\n⚠️ ${alasan}`; 
+        document.getElementById('alarm-modal').classList.remove('hidden');
+        
+        const audio = document.getElementById('alarm-audio');
+        if(audio) {
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("Auto-play diblokir browser, harap klik area web terlebih dahulu."));
+        }
+    }
+
+    function stopAlarm() {
+        document.getElementById('alarm-modal').classList.add('hidden');
+        const audio = document.getElementById('alarm-audio');
+        if(audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }
+
+    // SOCKET PENDETEKSI HASIL REDAMAN (SOCKET.IO)
+    socket.on('realtime_redaman_result', (data) => {
+      if (currentDiagUser && data.username.toLowerCase() === currentDiagUser.toLowerCase()) {
+         let redamanText = "Tdk Ditemukan";
+         if(data.redamanText && data.redamanText.includes("Redaman:")) {
+             const match = data.redamanText.match(/Redaman:\s*\*([-\d.]+\s*dBm)\*/);
+             if(match && match[1]) {
+                 redamanText = match[1];
+             }
+         }
+
+         // Animasi Finish (Ungu Statis)
+         const boxRx = document.getElementById('box-rx');
+         if (boxRx) {
+             boxRx.classList.remove('rx-box-loading', 'rx-box-scanning');
+             boxRx.classList.add('rx-box-done');
+         }
+
+         const diagRxElement = document.getElementById('diag-rx');
+         if (diagRxElement) {
+             diagRxElement.innerHTML = `<span class="text-purple-300 font-bold text-sm mt-1 block">${redamanText}</span>`;
+         }
+         
+         let matchCust = customers.find(c => c.name.toLowerCase() === currentDiagUser.toLowerCase());
+         if(matchCust) {
+             matchCust.rx = redamanText.replace(' dBm', '');
+             renderTable(true);
+         }
+      }
+    });
+    
+    function addConsoleLog(type, message) {
+      const consoleBox = document.getElementById('console-stream');
+      const logEntry = document.createElement('div');
+      logEntry.className = "p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-[11px]";
+
+      let badge = '<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">[INFO]</span>';
+      if (type === 'DYING_GASP') badge = '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">[TRAP: DYING_GASP]</span>';
+      if (type === 'LOS') badge = '<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold">[TRAP: LOS]</span>';
+
+      logEntry.innerHTML = `<div class="text-slate-500 text-[10px] mb-1">${new Date().toLocaleTimeString('id-ID')} WIB</div><div>${badge} ${message}</div>`;
+      consoleBox.prepend(logEntry);
+      trapLogsCount++;
+      document.getElementById('badge-trap-count').innerText = trapLogsCount;
+    }
+
+    function clearConsoleLog() {
+      document.getElementById('console-stream').innerHTML = '';
+      trapLogsCount = 0;
+      document.getElementById('badge-trap-count').innerText = '0';
+    }
+
+    function switchTab(tabName) {
+      ['list', 'topology', 'console'].forEach(t => {
+        document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tabName);
+        document.getElementById(`tab-btn-${t}`).classList.toggle('on', t === tabName);
+      });
+      toggleMenu(false);
+      window.scrollTo(0, 0);
+    }
+
+    function showToast(title, body, color = 'cyan') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      let borderClass = color === 'amber' ? 'border-amber-500' : (color === 'rose' ? 'border-rose-500' : (color === 'emerald' ? 'border-emerald-500' : 'border-cyan-500'));
+      toast.className = `p-3.5 bg-slate-900/90 backdrop-blur-md border-l-4 ${borderClass} rounded-2xl shadow-2xl text-xs space-y-1 border-slate-800 pointer-events-auto font-mono`;
+      toast.innerHTML = `<div class="font-extrabold text-slate-100">${title}</div><p class="text-slate-400 text-[11px]">${body}</p>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    async function bukaPonModal(serverLabel) {
+      openModal('pon-modal');
+      document.getElementById('pon-modal-title').innerText = `Daftar OLT Node ${serverLabel}`;
+      document.getElementById('pon-modal-subtitle').innerText = 'Mengambil data dari konfigurasi...';
+      const container = document.getElementById('pon-container');
+      container.innerHTML = '<div class="text-xs text-slate-400 text-center py-8"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-cyan-500 mb-3"></i><br>Memuat data...</div>';
+
+      try {
+        const res = await fetch(`/api/server-olt/${encodeURIComponent(serverLabel)}`);
+        const data = await res.json();
+        
+        if (data.success) {
+          document.getElementById('pon-modal-subtitle').innerText = `Ditemukan ${data.olts.length} perangkat OLT`;
+          container.innerHTML = '';
+          
+          if (data.olts.length === 0) {
+            container.innerHTML = '<div class="text-xs text-amber-400 text-center py-4">Tidak ada OLT yang terdaftar di node ini.</div>';
+            return;
+          }
+
+          data.olts.forEach((olt, index) => {
+            const maxPon = olt.total_pon || 8; 
+            let ponButtons = '';
+            
+            for(let i = 1; i <= maxPon; i++) {
+              ponButtons += `<button onclick="scanPonTarget('${data.serverKey}', '${olt.ip}', ${i}, '${olt.label}')" class="py-2.5 px-1 text-[10px] font-bold bg-slate-900 border border-slate-700 hover:border-cyan-400 hover:text-cyan-400 text-slate-300 rounded-lg transition flex flex-col items-center justify-center gap-1.5"><i class="fa-solid fa-ethernet text-slate-500"></i> PON ${i}</button>`;
+            }
+
+            container.innerHTML += `
+              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 hover:border-slate-600 transition">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-800/50 pb-2">
+                  <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-microchip"></i> ${olt.label || 'OLT ' + (index+1)}</span>
+                  <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">${olt.ip} • ${olt.type}</span>
+                </div>
+                <div class="grid grid-cols-4 gap-2.5">
+                  ${ponButtons}
+                </div>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        container.innerHTML = '<div class="text-xs text-rose-400 text-center py-4">Gagal terhubung ke backend.</div>';
+      }
+    }
+
+    async function scanPonTarget(serverKey, oltIp, ponNumber, oltLabel) {
+      document.getElementById('pon-container').innerHTML = `
+        <div class="text-xs text-cyan-400 text-center py-10 flex flex-col items-center">
+            <i class="fa-solid fa-satellite-dish fa-beat text-3xl mb-4"></i>
+            <span class="font-bold text-sm text-white mb-1">Membaca MAC Address dari OLT...</span>
+            <span class="text-slate-400">Target: ${oltLabel} (PON ${ponNumber})</span>
+            <span class="text-[10px] text-slate-500 mt-4 max-w-xs">Mengirim instruksi query ke OLT. Proses ini memakan waktu beberapa detik.</span>
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/scan-pon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ serverKey, oltIp, pon: ponNumber })
+        });
+        const data = await res.json();
+        pollScanPonResult(data.queueId, oltLabel, ponNumber, serverKey);
+
+      } catch (err) {
+        showToast('ERROR', 'Gagal memanggil antrian API', 'rose');
+        closeModal('pon-modal');
+      }
+    }
+
+    function pollScanPonResult(queueId, oltLabel, ponNumber, serverKey) {
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch(`/api/queue-result/${queueId}`);
+                const data = await res.json();
+                
+                if (data.status === 'done') {
+                    clearInterval(interval);
+                    closeModal('pon-modal');
+                    currentPonMacs = data.data.macs || [];
+                    document.getElementById('flt-pon-reset').classList.remove('hidden');
+                    document.getElementById('label-pon-filter').innerHTML = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-filter"></i> OLT ${oltLabel} (PON ${ponNumber})</span>`;
+                    switchTab('list');
+                    showToast('BERHASIL', `Ditemukan ${currentPonMacs.length} pelanggan di ${oltLabel} PON ${ponNumber}`, 'emerald');
+                    renderTable(); 
+                    
+                } else if (data.status === 'error') {
+                    clearInterval(interval);
+                    closeModal('pon-modal');
+                    showToast('GAGAL BACA OLT', data.error || 'Terjadi kesalahan sistem', 'rose');
+                }
+            } catch(e) {
+                clearInterval(interval);
+                closeModal('pon-modal');
+            }
+        }, 2000);
+    }
+
+    window.onload = function() {
+      document.getElementById('flt-all').classList.add('on');
+      document.getElementById('tab-btn-list').classList.add('on');
+      loadCustomersFromMikrotik();
+      setInterval(loadCustomersFromMikrotik, 30000);
+    };
+  </script>
+</body>
+</html>
